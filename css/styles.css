@@ -16,7 +16,7 @@ html, body {
 body {
     font-family: "Nunito", sans-serif;
     text-align: center;
-    background: rgba(235, 235, 235, 0.9);
+    background: lightblue;
 }
 
 header {
@@ -92,6 +92,7 @@ header h1 {
     border: 1px solid rgba(50, 50, 50, 0.3);
     transition: .4s ease-out;
     overflow: hidden;
+    box-shadow: 5px 5px salmon;
 }
 
 .card-img {
@@ -106,6 +107,7 @@ header h1 {
 
 .card-name {
     margin: 20px auto 0;
+    color: salmon;
 }
 
 .card-text {
