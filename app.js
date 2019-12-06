@@ -10,7 +10,6 @@ fetch("https://randomuser.me/api/?results=12")
     .catch(err => console.log(err));
 
 function generateGallery(users) {
-    console.log(users);
 	const galleryHTML = users
 		.map(
 			employee => `
@@ -32,7 +31,7 @@ function generateGallery(users) {
     const cards = Array.from(document.getElementsByClassName('card'));
     cards.forEach(function (element, index) {
         element.addEventListener('click', () => {
-            console.log(index);
+            generateModal(index);
         })
     });
 }
@@ -43,14 +42,14 @@ function generateModal(user) {
         <div class="modal">
             <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
             <div class="modal-info-container">
-                <img class="modal-img" src="https://placehold.it/125x125" alt="profile picture">
-                <h3 id="name" class="modal-name cap">name</h3>
-                <p class="modal-text">email</p>
-                <p class="modal-text cap">city</p>
+                <img class="modal-img" src="${users[user].picture.large}" alt="profile picture">
+                <h3 id="name" class="modal-name cap">${users[user].name.first} ${users[user].name.last}</h3>
+                <p class="modal-text">${users[user].email}</p>
+                <p class="modal-text cap">${users[user].location.city}</p>
                 <hr>
-                <p class="modal-text">(555) 555-5555</p>
-                <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-                <p class="modal-text">Birthday: 10/21/2015</p>
+                <p class="modal-text">Cell Phone: ${users[user].cell}</p>
+                <p class="modal-text">${users[user].location.street.number} ${users[user].location.street.name}, ${users[user].location.city}, ${users[user].location.state} ${users[user].location.postcode}</p>
+                <p class="modal-text">Birthday: ${users[user].dob.date.split("T")[0]}</p>
             </div>
         </div>
         <!-- IMPORTANT: Below is only for exceeds tasks -->
@@ -61,10 +60,43 @@ function generateModal(user) {
     </div>
     `;
     var lastElement = document.querySelector('body').lastElementChild;
-    lastElement.insertAdjacentHTML('beforebegin', modalHTML)
-    // document.body.innerHTML += modalHTML;
-    document
-		.getElementById("modal-close-btn").addEventListener("click", () => { document.querySelector(".modal-container").remove();});
+    lastElement.insertAdjacentHTML('beforebegin', modalHTML);
+
+    const modalContainer = document.querySelector(".modal-container");
+    const previousButton = document.getElementById("modal-prev");
+    const nextButton = document.getElementById("modal-next");
+    const closeButton = document.getElementById("modal-close-btn")
+
+    previousButton.addEventListener('click', () => {
+        modalContainer.remove();
+        // if this is the first user and previous is clicked, lets show the last user
+        if(user === 0){
+            generateModal(users.length - 1);
+        // if not first user, show the previous user
+        } else {
+            generateModal(user - 1);
+        }
+    });
+    
+    // if(user === users.length - 1) {
+    //     nextButton.style.display="none";
+    // }
+
+
+    nextButton.addEventListener('click', () => {
+        modalContainer.remove();
+        if(user === users.length - 1){
+            generateModal(0);
+        // if not first user, show the previous user
+        } else {
+            generateModal(user + 1);
+        }
+    });
+
+    closeButton.addEventListener("click", () => { 
+        modalContainer.remove();
+    });        
+
     // setTimeout(() => {
     //     document.querySelector(".modal-container").remove();
     // }, 1000);
