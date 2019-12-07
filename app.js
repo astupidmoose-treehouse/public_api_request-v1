@@ -1,15 +1,24 @@
+// Find the gallery
 const gallery = document.getElementById("gallery");
+
+// create an empty array of users
 let users = [];
 
+// pull 12 results from the API of random users
 fetch("https://randomuser.me/api/?results=12")
+    // parse the response into json
     .then(response => response.json())
     .then(data => {
+        // replace the users array with the array of user objects from the response. 
         users = data.results;
+        // use the users array to call the generateGallery function with the users as the argument
         generateGallery(users);
     })
     .catch(err => console.log(err));
 
+// Create the gallery, we require an array of user objects
 function generateGallery(users) {
+    // initialize the HTML, it will be a map of the array of user objects.
 	const galleryHTML = users
 		.map(
 			employee => `
@@ -24,19 +33,28 @@ function generateGallery(users) {
     </div>
     </div>
     `
+    // add .join to remove the commas from json
     ).join("");
 
-    document.getElementById("gallery").innerHTML = galleryHTML;
+    // replace the innerHTML of the gallery element with the new HTML. 
+    gallery.innerHTML = galleryHTML;
 
+    // Create a new cards array, this array is created from the nodelist with all the nodes of the class "card"
     const cards = Array.from(document.getElementsByClassName('card'));
+
+    // Now that we have an array, we can call foreach.
     cards.forEach(function (element, index) {
+        // for reach element (card), we add an event listener for clicks. 
         element.addEventListener('click', () => {
+            // when a card is clicked, it calls the GenerateModal function, with an argument equal to the index of the card that was clicked. We pass this index, to reference the index in the users array
             generateModal(index);
         })
     });
 }
 
+// Create the Modal view, the user argument is a number (index of the user clicked)
 function generateModal(user) {
+    // generate the HTML we will pass
     const modalHTML = `
     <div class="modal-container">
         <div class="modal">
@@ -59,15 +77,26 @@ function generateModal(user) {
         </div>
     </div>
     `;
+
+    // The HTML is to be added to the end of the page. Select the last Element of the page (the Script tag)
     var lastElement = document.querySelector('body').lastElementChild;
+    // insert the modalHTML before the beginning of the script tag
     lastElement.insertAdjacentHTML('beforebegin', modalHTML);
 
+    // define elements of the modal container. These need to be defined in the function as they do not exist before the function creates them.
+    // the container that holds all modal info
     const modalContainer = document.querySelector(".modal-container");
+    // the previous result button
     const previousButton = document.getElementById("modal-prev");
+    // the next result button
     const nextButton = document.getElementById("modal-next");
-    const closeButton = document.getElementById("modal-close-btn")
+    // the close button in the top right hand corner
+    const closeButton = document.getElementById("modal-close-btn");
 
+
+    // add an event listener for the previous button
     previousButton.addEventListener('click', () => {
+        // remove any modal that exists
         modalContainer.remove();
         // if this is the first user and previous is clicked, lets show the last user
         if(user === 0){
@@ -77,145 +106,24 @@ function generateModal(user) {
             generateModal(user - 1);
         }
     });
-    
-    // if(user === users.length - 1) {
-    //     nextButton.style.display="none";
-    // }
-
 
     nextButton.addEventListener('click', () => {
+        // remove any modal that exists
         modalContainer.remove();
+        // if this is the last user, loop back to the first user
         if(user === users.length - 1){
             generateModal(0);
-        // if not first user, show the previous user
+        // if not last user, show the next user
         } else {
             generateModal(user + 1);
         }
     });
 
+    // if the close button is clicked, remove the modal
     closeButton.addEventListener("click", () => { 
         modalContainer.remove();
-    });        
-
-    // setTimeout(() => {
-    //     document.querySelector(".modal-container").remove();
-    // }, 1000);
-	// document
-	// 	.getElementById("modal-close-btn")
-	// 	.addEventListener("click", () =>
-	// 		document.querySelector(".modal-container").remove()
-	// 	);
+    });
 }
-
-// setTimeout(() => {
-// 	const cards = document.querySelectorAll(".card");
-// 	console.log(cards);
-// 	// cards.addEventListener('click', () => generateModal());
-
-// 	for (var i = 0; i < cards.length; i++) {
-// 		cards[i].addEventListener("click", function() {
-// 			generateModal();
-// 		});
-// 	}
-// 	//         if (!confirm("sure u want to delete " + this.title)) {
-// 	//             event.preventDefault();
-// 	//         }
-// 	//     });
-// 	// }
-// }, 1000);
-
-// // Create a new variable for the request
-// var randomPeople = new XMLHttpRequest();
-
-// // create a callback function
-// randomPeople.onreadystatechange = function(){
-//     // check for a ready state of 4 and status returned of 200
-//     if(randomPeople.readyState === 4 && randomPeople.status === 200){
-//         // initialize a new variable for gallery's html content
-//         var galleryHTML = '';
-
-//         // parse the response of the call into a JSON format
-//         var employees = JSON.parse(randomPeople.responseText);
-//         console.log(employees);
-
-//         // since the JSON returns an object, we are only interested in the results array of the object, lets reassign the variable to be the results array
-//         employees = employees.results;
-
-//         // loop through each of the results in the array
-//         console.log(employees);
-
-//         for( i = 0; i<employees.length; i += 1){
-//             // add the HTML for each employee
-
-//             // in order to meet "exceeds" requirements for Structure, style and CSS, I've added some colors to the background on certain ages. Anyone under 18 is red, over 65 is yellow.
-//             if (employees[i].dob.age < 18){
-//                 galleryHTML += '<div class="card" style="background-color:red">'
-//             } else if (employees[i].dob.age > 65){
-//                 galleryHTML += '<div class="card" style="background-color:yellow">';
-//             } else {
-//                 galleryHTML += '<div class="card">'
-//             }
-//             galleryHTML += '<div class="card-img-container">';
-//             galleryHTML += '<img class="card-img" src="' + employees[i].picture.large + '" alt="profile picture">';
-//             galleryHTML += '</div>';
-//             galleryHTML += '<div class="card-info-container">';
-//             galleryHTML += '<h3 id="name" class="card-name cap">'+ employees[i].name.first + ' ' + employees[i].name.last + '</h3>';
-//             galleryHTML += '<p class="card-text">'+ employees[i].email +'</p>';
-//             galleryHTML += '<p class="card-text cap">' + employees[i].location.city + ', ' + employees[i].location.state + ', ' + employees[i].location.country + '</p>';
-//             galleryHTML += '</div>';
-//             galleryHTML += '</div>';
-//         }
-//     }
-//     // append the HTML to the gallery on the main page
-//     document.getElementById('gallery').innerHTML = galleryHTML;
-// }
-
-// // specify where to call
-// randomPeople.open('GET', 'https://randomuser.me/api/?results=12');
-
-// // send the request
-// randomPeople.send();
-
-/* 
-TODO: Modal markup:
-
-You can use the commented out markup below as a template
-for your modal, but you must use JS to create and append 
-it to `body`.
-
-IMPORTANT: Altering the arrangement of the markup and the 
-attributes used may break the styles or functionality.
-
-
-======================== --
-*/
-
-// function openModal(){
-//     let modalHTML = `
-//     <div class="modal-container">
-//     <div class="modal">
-//         <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-//         <div class="modal-info-container">
-//             <img class="modal-img" src="https://placehold.it/125x125" alt="profile picture">
-//             <h3 id="name" class="modal-name cap">name</h3>
-//             <p class="modal-text">email</p>
-//             <p class="modal-text cap">city</p>
-//             <hr>
-//             <p class="modal-text">(555) 555-5555</p>
-//             <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-//             <p class="modal-text">Birthday: 10/21/2015</p>
-//         </div>
-//     </div>
-
-//     // IMPORTANT: Below is only for exceeds tasks
-//     <div class="modal-btn-container">
-//         <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
-//         <button type="button" id="modal-next" class="modal-next btn">Next</button>
-//     </div>
-//     </div>
-//     `;
-//     document.querySelector('body').append(modalHTML);
-// };
 
 /*
 TODO Search markup: 
@@ -234,6 +142,7 @@ attributes used may break the styles or functionality.
 ======================= --
 */
 
+// generate the searchbar
 var searchHTML =
 	'<form action="#" method="get"><input type="search" id="search-input" class="search-input" placeholder="Search..."><input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit"></form>';
 document.querySelector(".search-container").innerHTML = searchHTML;
