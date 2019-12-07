@@ -5,7 +5,7 @@ const gallery = document.getElementById("gallery");
 let users = [];
 
 // pull 12 results from the API of random users
-fetch("https://randomuser.me/api/?results=12")
+fetch("https://randomuser.me/api/?results=12&nat=CA")
     // parse the response into json
     .then(response => response.json())
     .then(data => {
@@ -29,7 +29,7 @@ function generateGallery(users) {
     <div class="card-info-container">
     <h3 id="name" class="card-name cap">${employee.name.first} ${employee.name.last}</h3>
     <p class="card-text">${employee.email}</p>
-    <p class="card-text cap">${employee.location.city}, ${employee.location.state}, ${employee.location.country}</p>
+    <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
     </div>
     </div>
     `
