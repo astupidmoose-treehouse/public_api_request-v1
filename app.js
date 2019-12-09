@@ -37,8 +37,10 @@ function generateGallery(users) {
     ).join("");
 
     // replace the innerHTML of the gallery element with the new HTML. 
+    // If there are no users, show a message
     if (users.length === 0){
         gallery.innerHTML = "Sorry, No Users Found";
+    // Show the html
     } else {
         gallery.innerHTML = galleryHTML;
     }
@@ -56,7 +58,7 @@ function generateGallery(users) {
     });
 }
 
-// Create the Modal view, the user argument is a number (index of the user clicked)
+// Create the Modal view, ListOfUsers is an array of user objects, the user argument is a number (index of the user clicked)
 function generateModal(listOfUsers, user) {
     // generate the HTML we will pass
     const users = listOfUsers;
@@ -131,22 +133,27 @@ function generateModal(listOfUsers, user) {
 }
 
 function searchUsers(){
+    // create a new array to store results of search
     let searchResults = [];
+    // get the value of the input
     const searchInput = document.getElementById('search-input').value;
+    // loop through the users array to look for matches from the value of the input. If a match exists, add that object to the results array
     users.forEach(element => {
         if(searchInput !== 0 && (element.name.first.toLowerCase().includes(searchInput.toLowerCase()) || element.name.last.toLowerCase().includes(searchInput.toLowerCase()))){
             searchResults.push(element);
         }
     });
-    
+
+    // clear the existing gallery
     gallery.innerHTML = "";
+    // create a new gallery using the search results. 
     generateGallery(searchResults);
 }
 
 
 // generate the searchbar
 var searchHTML =
-    `<form action="#" method="get" onsubmit="searchUsers()">
+    `<form action="#" method="get" onsubmit="event.preventDefault(); searchUsers()">
         <input type="search" id="search-input" class="search-input" placeholder="Search...">
         <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
     </form>`;
