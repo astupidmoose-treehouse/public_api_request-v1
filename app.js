@@ -37,7 +37,11 @@ function generateGallery(users) {
     ).join("");
 
     // replace the innerHTML of the gallery element with the new HTML. 
-    gallery.innerHTML = galleryHTML;
+    if (users.length === 0){
+        gallery.innerHTML = "Sorry, No Users Found";
+    } else {
+        gallery.innerHTML = galleryHTML;
+    }
 
     // Create a new cards array, this array is created from the nodelist with all the nodes of the class "card"
     const cards = Array.from(document.getElementsByClassName('card'));
@@ -47,14 +51,15 @@ function generateGallery(users) {
         // for reach element (card), we add an event listener for clicks. 
         element.addEventListener('click', () => {
             // when a card is clicked, it calls the GenerateModal function, with an argument equal to the index of the card that was clicked. We pass this index, to reference the index in the users array
-            generateModal(index);
+            generateModal(users, index);
         })
     });
 }
 
 // Create the Modal view, the user argument is a number (index of the user clicked)
-function generateModal(user) {
+function generateModal(listOfUsers, user) {
     // generate the HTML we will pass
+    const users = listOfUsers;
     const modalHTML = `
     <div class="modal-container">
         <div class="modal">
@@ -100,10 +105,10 @@ function generateModal(user) {
         modalContainer.remove();
         // if this is the first user and previous is clicked, lets show the last user
         if(user === 0){
-            generateModal(users.length - 1);
+            generateModal(users, users.length - 1);
         // if not first user, show the previous user
         } else {
-            generateModal(user - 1);
+            generateModal(users, user - 1);
         }
     });
 
@@ -112,10 +117,10 @@ function generateModal(user) {
         modalContainer.remove();
         // if this is the last user, loop back to the first user
         if(user === users.length - 1){
-            generateModal(0);
+            generateModal(users, 0);
         // if not last user, show the next user
         } else {
-            generateModal(user + 1);
+            generateModal(users, user + 1);
         }
     });
 
@@ -125,25 +130,24 @@ function generateModal(user) {
     });
 }
 
-/*
-TODO Search markup: 
+function searchUsers(){
+    let searchResults = [];
+    const searchInput = document.getElementById('search-input').value;
+    users.forEach(element => {
+        if(searchInput !== 0 && (element.name.first.toLowerCase().includes(searchInput.toLowerCase()) || element.name.last.toLowerCase().includes(searchInput.toLowerCase()))){
+            searchResults.push(element);
+        }
+    });
+    
+    gallery.innerHTML = "";
+    generateGallery(searchResults);
+}
 
-You can use the commented out markup below as a template
-for your search feature, but you must use JS to create and 
-append it to `search-container` div.
-
-IMPORTANT: Altering the arrangement of the markup and the 
-attributes used may break the styles or functionality.
-
-<form action="#" method="get">
-    <input type="search" id="search-input" class="search-input" placeholder="Search...">
-    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-</form>
-======================= --
-*/
 
 // generate the searchbar
 var searchHTML =
-	'<form action="#" method="get"><input type="search" id="search-input" class="search-input" placeholder="Search..."><input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit"></form>';
+    `<form action="#" method="get" onsubmit="searchUsers()">
+        <input type="search" id="search-input" class="search-input" placeholder="Search...">
+        <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+    </form>`;
 document.querySelector(".search-container").innerHTML = searchHTML;
-
